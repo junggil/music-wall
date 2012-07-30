@@ -1,8 +1,42 @@
 var util = require('util')
-    , fs = require('fs');
+    , fs = require('fs')
+    , exec = require('child_process').exec;
+
+function renderByDate(files, res) {
+    var count = files.length, 
+        results = {};
+    var escapeshell = function(cmd) {
+      return '"'+cmd.replace(/(["\s'$`\\])/g,'\\$1')+'"';
+    };
+
+    var sortOnKeys = function(dict) {
+        var sorted = [];
+        for(var key in dict) {
+            sorted[sorted.length] = key;
+        }
+        sorted.sort();
+
+        var tempDict = {};
+        for(var i = 0; i < sorted.length; i++) {
+            tempDict[sorted[i]] = dict[sorted[i]];
+        }
+
+        return tempDict;
+    };
+
+    files.forEach(function(file) {
+        exec('mediainfo "public/musics/' + escapeshell(file) + '" | grep Track | cut -d ":" -f 2', function(error, stdout, stderr) { 
+            results[file] = stdout;
+            count--;
+            if (count == 0) {
+                res.render('index', {musics: sortOnKeys(results)});
+            }
+        });
+    });
+}
     
-exports.index = function(req, res){
-    res.render('index', { title: 'Express'});
+exports.index= function(req, res){
+    renderByDate(fs.readdirSync('public/musics/'), res);
 };
 
 exports.test = function(req, res){
