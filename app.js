@@ -3,9 +3,9 @@
  */
 
 var express = require('express')
-    , routes = require('./routes');
-
-var app = module.exports = express.createServer();
+  , routes = require('./routes')
+  , app = express.createServer()
+  , io = require('socket.io').listen(app);
 
 // Configuration
 
@@ -22,13 +22,6 @@ app.configure(function(){
   app.use(app.router);
 });
 
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
-
-app.configure('production', function(){
-  app.use(express.errorHandler());
-});
 
 app.is('an image', function(req){
     console.log('->> ' + req.headers['content-type']);
@@ -47,8 +40,14 @@ app.is('an image', function(req){
     return true;
 });
 
-// Routes
 
+io.sockets.on('connection', function(socket) {
+    socket.join('music-wall');
+    socket.on('keydown', function(data) { socket.broadcast.emit('keydown', data); socket.emit('keydown', data); });
+    socket.on('click',   function(data) { socket.broadcast.emit('click',   data); socket.emit('click',   data); });
+});
+
+// Routes
 app.get('/', routes.index);
 app.get('/test', routes.test);
 app.post('/upload', routes.upload);
