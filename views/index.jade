@@ -6,6 +6,7 @@ html(lang='en')
         meta(content='width=device-width, initial-scale=0.6', name='viewport')
         link(rel='stylesheet', href='/css/audio.css')
         script(type='text/javascript', src='js/jquery.js')
+        script(type='text/javascript', src='js/list/list.js')
         script(type='text/javascript', src='/socket.io/socket.io.js')
         script(type='text/javascript', src='js/audiojs/audio.js')
         script(type='text/javascript', src='js/audiojs/script.js')
@@ -16,9 +17,16 @@ html(lang='en')
             em (Music-Wall)
           audio(preload)
           ol
-            each music in Object.keys(musics)
-                li
-                  a(href='#', data-src='musics/#{music}') #{musics[music]}
+            #music-list
+                ul.list
+                    each music in Object.keys(musics)
+                        li
+                          a(href='#', data-src='musics/#{music}')
+                             strong.title #{musics[music]}
+                             small.artist
+
+                p
+                    input.search(placeholder='Title Search')
         #shortcuts
           div
             h1 Keyboard shortcuts:
@@ -31,3 +39,7 @@ html(lang='en')
             p
               em Space
               | Play/pause
+
+        script(type='text/javascript')
+            var options = { valueNames: [ 'title', 'artist' ] };
+            var musicList = new List('music-list', options);
