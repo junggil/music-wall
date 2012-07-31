@@ -19,9 +19,6 @@ $(function() {
     // Load in a track on click
     $('ol li').click(function(e) {
       e.preventDefault();
-      $(this).addClass('playing').siblings().removeClass('playing');
-      audio.load($('a', this).attr('data-src'));
-      audio.play();
       socket.emit('click', {'offset' : $('ol li').index(this)});
     });
 
@@ -45,7 +42,9 @@ $(function() {
 
     $(document).keydown(function(e) {
       var unicode = e.charCode ? e.charCode : e.keyCode;
-      socket.emit('keydown', {'unicode' : unicode});
+      if (unicode == 39 || unicode == 37 || unicode == 32) {
+          socket.emit('keydown', {'unicode' : unicode});
+       }
     });
 
     // Setup the socket.io channel

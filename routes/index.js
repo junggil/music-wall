@@ -6,7 +6,7 @@ function renderByDate(files, res) {
     var count = files.length, 
         results = {};
     var escapeshell = function(cmd) {
-      return '"'+cmd.replace(/(["\s'$`\\])/g,'\\$1')+'"';
+      return '"'+cmd.replace(/(["\s'$`\\()&])/g,'\\$1')+'"';
     };
 
     var sortOnKeys = function(dict) {
@@ -25,7 +25,7 @@ function renderByDate(files, res) {
     };
 
     files.forEach(function(file) {
-        exec('mediainfo "public/musics/' + escapeshell(file) + '" | grep Track | cut -d ":" -f 2', function(error, stdout, stderr) { 
+        exec('mediainfo "public/musics/' + escapeshell(file) + '" |grep "Track name"| awk "NR==1" | cut -d ":" -f 2', function(error, stdout, stderr) { 
             results[file] = stdout;
             count--;
             if (count == 0) {
