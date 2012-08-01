@@ -40,12 +40,25 @@ app.is('an image', function(req){
     return true;
 });
 
+var clients = 0
+  , readiness = 0;
 
 io.sockets.on('connection', function(socket) {
+    clients += 1;
     socket.join('music-wall');
     socket.on('keydown', function(data) { socket.broadcast.emit('keydown', data); socket.emit('keydown', data); });
     socket.on('click',   function(data) { socket.broadcast.emit('click',   data); socket.emit('click',   data); });
+    socket.on('ready',   function() { 
+        readiness += 1; 
+        console.log('clients : ' + clients + ', readiness : ' + readiness);
+        if (readiness == clients) {
+            socket.broadcast.emit('play'); socket.emit('play'); 
+            readiness = 0;
+        }
+    });       
+    socket.on('disconnect', function()  { clients -= 1; });
 });
+
 
 // Routes
 app.get('/', routes.index);

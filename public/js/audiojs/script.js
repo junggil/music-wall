@@ -22,23 +22,41 @@ $(function() {
       socket.emit('click', {'offset' : $('ol li').index(this)});
     });
 
+    // Mouse click shortcuts
+    function mouseShortcut(item) {
+        item.addClass('playing').siblings().removeClass('playing');
+        audio.load($('a', item).attr('data-src'));
+        audio.pause();
+
+        (function loadingCheck(duration) {
+            return setTimeout(function(duration) {
+                if($('.loading').length == 1) {
+                    setTimeout(function(){socket.emit('ready');}, 500);
+                } else {
+                    loadingCheck(100);
+                }
+            }, duration);
+        })(1000);
+    };
+
     // Keyboard shortcuts
     function keyboardShortcut(unicode) {
       // right arrow
       if (unicode == 39) {
         var next = $('li.playing').next();
         if (!next.length) next = $('ol li').first();
-        next.click();
+        mouseShortcut(next);
         // back arrow
       } else if (unicode == 37) {
         var prev = $('li.playing').prev();
         if (!prev.length) prev = $('ol li').last();
-        prev.click();
+        mouseShortcut(prev);
         // spacebar
       } else if (unicode == 32) {
         audio.playPause();
       }
     };
+
 
     $(document).keydown(function(e) {
       var unicode = e.charCode ? e.charCode : e.keyCode;
@@ -52,10 +70,11 @@ $(function() {
     socket.on('keydown', function(data) {
         keyboardShortcut(data.unicode);
     });
+    socket.on('play', function() {
+        audio.play();
+    });
     socket.on('click', function(data) {
         var item = $('ol li').eq(data.offset);
-        item.addClass('playing').siblings().removeClass('playing');
-        audio.load($('a', item).attr('data-src'));
-        audio.play();
+        mouseShortcut(item);
     });
 });
