@@ -35,48 +35,40 @@ function renderByDate(files, res) {
     });
 }
     
-exports.index= function(req, res){
+exports.index = function(req, res){
     renderByDate(fs.readdirSync('public/musics/'), res);
 };
 
-exports.test = function(req, res){
-    res.render('test', { title: 'Upload Test'});
+exports.drag = function(req, res){
+    res.render('drag', { title: 'Drag & Drop Upload Test'});
 };
 
 exports.upload = function(req, res){
-    if(req.is('an image')){
-        console.log('-> upload was called\n\n');
-        console.log('-> ' +  util.inspect(req.files));        
-        var images = [];
-    
-        req.addListener('data', function(chunk) {
-            console.log('-> data ' + chunk);
-        });
-    
-        if (Array.isArray(req.files.imgs)){
-            req.files.imgs.forEach(function(image){
-                var kb = image.size / 1024 | 0;
+    console.log('-> upload was called\n\n');
+    console.log('-> ' +  util.inspect(req.files));        
+    var images = [];
 
-                images.push({name: image.name, size: kb});
-                renameImg(image);
-            });  
-        }else{
-            var image = req.files.imgs;
+    req.addListener('data', function(chunk) {
+        console.log('-> data ' + chunk);
+    });
+
+    if (Array.isArray(req.files.imgs)){
+        req.files.imgs.forEach(function(image){
             var kb = image.size / 1024 | 0;
 
             images.push({name: image.name, size: kb});
             renameImg(image);
-        }
-    
-        console.log('->> render');
-        res.render('show', { title: 'Show'
-                            ,images: images
-        });
+        });  
     }else{
-        res.render('error', { title: 'Error'
-                            ,msg: 'plz Upload only Image types'
-        });
+        var image = req.files.imgs;
+        var kb = image.size / 1024 | 0;
+
+        images.push({name: image.name, size: kb});
+        renameImg(image);
     }
+
+    console.log('->> render');
+    res.send('"uploaded successfuly"');
 };
 
 function renameImg(image){

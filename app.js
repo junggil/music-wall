@@ -62,9 +62,8 @@ io.sockets.on('connection', function(socket) {
 
 // Routes
 app.get('/', routes.index);
-app.get('/test', routes.test);
+app.get('/drag', routes.drag);
 app.post('/upload', routes.upload);
-app.get('/public/images/*', routes.show);
 
 app.listen(4040);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
