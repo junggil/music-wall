@@ -13,31 +13,13 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view options', { layout: false });
-  app.use(express.limit('5mb'));
+  app.use(express.limit('10mb'));
   app.use(express.bodyParser({uploadDir: __dirname + '/public/tmp'}));  
   app.use(express.static(__dirname + '/public'));
   app.use(express.methodOverride());
   app.use(express.logger({ buffer: 5000}));
   app.use(express.favicon());
   app.use(app.router);
-});
-
-
-app.is('an image', function(req){
-    console.log('->> ' + req.headers['content-type']);
-    if(req.headers['content-type'].indexOf('multipart') === 0){
-        if (Array.isArray(req.files.imgs)){
-            req.files.imgs.forEach(function(image){
-                if(image.type.indexOf('image')  !== 0) return false;
-            });
-        }else{
-            console.log('->> ' + req.files.imgs.type);
-            if(req.files.imgs.type.indexOf('image') !== 0) return false;            
-        }
-    }else{
-        if(req.headers['content-type'].indexOf('image') !== 0) return false;
-    }
-    return true;
 });
 
 var clients = 0

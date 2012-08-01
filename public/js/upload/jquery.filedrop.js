@@ -32,7 +32,7 @@
 			refresh: 1000,
 			paramname: 'userfile',
 			maxfiles: 25,
-			maxfilesize: 5, // MBs
+			maxfilesize: 10, // MBs
 			data: {},
 			drop: empty,
 			dragEnter: empty,

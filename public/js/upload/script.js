@@ -7,8 +7,8 @@ $(function(){
 		// The name of the $_FILES entry:
 		paramname:'imgs',
 		
-		maxfiles: 5,
-    	maxfilesize: 2,
+		maxfiles: 10,
+    	maxfilesize: 10,
 		url: 'http://localhost:4040/upload',
 		
 		uploadFinished:function(i,file,response){
@@ -34,8 +34,8 @@ $(function(){
 		
 		// Called before each upload is started
 		beforeEach: function(file){
-			if(!file.type.match(/^image\//)){
-				alert('Only images are allowed!');
+			if(!file.type.match(/^audio\//)){
+				alert('Only audio/mp3 are allowed!');
 				
 				// Returning false will cause the
 				// file to be rejected
@@ -55,31 +55,24 @@ $(function(){
 	
 	var template = '<div class="preview">'+
 						'<span class="imageHolder">'+
-							'<img />'+
+							'<img src="/img/music_icon.png" />'+
 							'<span class="uploaded"></span>'+
 						'</span>'+
-						'<div class="progressHolder">'+
-							'<div class="progress"></div>'+
-						'</div>'+
 					'</div>'; 
 	
 	
 	function createImage(file){
 
-		var preview = $(template), 
-			image = $('img', preview);
-			
+		var preview = $(template);
 		var reader = new FileReader();
-		
-		image.width = 100;
-		image.height = 100;
 		
 		reader.onload = function(e){
 			
 			// e.target.result holds the DataURL which
 			// can be used as a source of the image:
 			
-			image.attr('src',e.target.result);
+            var trackInfo = '<div class="track-details">' + file.name.substring(0, 15) + ' ... </div>';
+			$(trackInfo).appendTo(preview);
 		};
 		
 		// Reading the file as a DataURL. When finished,
