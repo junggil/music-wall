@@ -1,9 +1,92 @@
-html
-  head
-    title= title
-    block scripts
-    block stylesheet
-        link(rel='stylesheet', href='/css/style.css')
-body
-  block content
-  block foot
+!!! 5
+html(lang='en')
+head
+    title =title
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+    meta(name='description', content='MusicWall')
+    meta(name='author', content='Jeongkil Lee')
+    link(href='css/bootstrap.css', rel='stylesheet')
+    link(href='css/page.css', rel='stylesheet')
+    style(type='text/css')
+      body {
+      padding-top: 60px;
+      padding-bottom: 40px;
+      }
+      .sidebar-nav {
+      padding: 9px 0;
+      }
+    link(href='css/bootstrap-responsive.css', rel='stylesheet')
+  body
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container-fluid
+          a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.brand(href='/') Music Wall
+          .btn-group.pull-right
+            a.btn.dropdown-toggle(data-toggle='dropdown', href='#')
+              i.icon-user
+              | Username
+              span.caret
+            ul.dropdown-menu
+              li
+                a(href='#') Profile
+              li.divider
+              li
+                a(href='#') Sign Out
+          .nav-collapse
+            ul.nav
+                if(target == 'home')
+                  li.active
+                    a(href='/') Home
+                else
+                  li
+                    a(href='/') Home
+                if(target == 'about')
+                  li.active
+                    a(href='/about') About
+                else
+                  li
+                    a(href='/about') About
+                if(target == 'changelog')
+                  li.active
+                    a(href='/changelog') Change Log
+                else
+                  li
+                    a(href='/changelog') Change Log
+                li
+                  a(href='https://github.com/sooshia/music-wall/downloads') Download
+                li
+                  a(href='https://github.com/sooshia/music-wall') Source
+    block content
+    footer
+      p
+        strong VShare
+        |  by NCT Team.
+      p
+        | Follow us on
+        a(href='http://twitter.com/funxiah') Twitter
+        | or
+        a(href='https://github.com/sooshia') GitHub
+        | .
+        | Maintained by
+        a(href='mailto:sooshia@gmail.com') Jeongkil.Lee
+        | .
+
+    script(src='js/jquery.js')
+    script(src='js/bootstrap-transition.js')
+    script(src='js/bootstrap-alert.js')
+    script(src='js/bootstrap-modal.js')
+    script(src='js/bootstrap-dropdown.js')
+    script(src='js/bootstrap-scrollspy.js')
+    script(src='js/bootstrap-tab.js')
+    script(src='js/bootstrap-tooltip.js')
+    script(src='js/bootstrap-popover.js')
+    script(src='js/bootstrap-button.js')
+    script(src='js/bootstrap-collapse.js')
+    script(src='js/bootstrap-carousel.js')
+    script(src='js/bootstrap-typeahead.js')
+

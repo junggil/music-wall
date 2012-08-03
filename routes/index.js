@@ -29,7 +29,7 @@ function renderByDate(files, res) {
             results[file] = stdout;
             count--;
             if (count == 0) {
-                res.render('index', {musics: sortOnKeys(results)});
+                res.render('index', {title : 'MusicWall, A Synchronized Audio Player', target : 'home', musics : sortOnKeys(results)});
             }
         });
     });
@@ -38,6 +38,15 @@ function renderByDate(files, res) {
 exports.index = function(req, res){
     renderByDate(fs.readdirSync('public/musics/'), res);
 };
+
+exports.about = function(req, res){
+    res.render('about', { title: 'MusicWall, Information', target : 'about' });
+};
+
+exports.changelog = function(req, res){
+    res.render('changelog', { title: 'MusicWall, History of modification', target : 'changelog' });
+};
+
 
 exports.drag = function(req, res){
     res.render('drag', { title: 'Drag & Drop Upload Test'});

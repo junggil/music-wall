@@ -45,6 +45,8 @@ io.sockets.on('connection', function(socket) {
 // Routes
 app.get('/', routes.index);
 app.get('/drag', routes.drag);
+app.get('/about', routes.about);
+app.get('/changelog', routes.changelog);
 app.post('/upload', routes.upload);
 
 app.listen(4040);
