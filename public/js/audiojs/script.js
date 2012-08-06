@@ -26,6 +26,7 @@ $(function() {
     function mouseShortcut(item) {
         item.addClass('playing').siblings().removeClass('playing');
         audio.load($('a', item).attr('data-src'));
+        fetchAlbumcover();
         audio.pause();
 
         (function loadingCheck(duration) {
@@ -57,7 +58,6 @@ $(function() {
       }
     };
 
-
     $(document).keydown(function(e) {
       var unicode = e.charCode ? e.charCode : e.keyCode;
       if (unicode == 39 || unicode == 37 || unicode == 32) {
@@ -77,4 +77,21 @@ $(function() {
         var item = $('ol li').eq(data.offset);
         mouseShortcut(item);
     });
+
+    if(typeof(String.prototype.trim) === "undefined")
+    {
+        String.prototype.trim = function() 
+        {
+            return String(this).replace(/^\s+|\s+$/g, '');
+        };
+    }
+
+    function fetchAlbumcover(){
+        var title = $('.playing a strong').text().trim();
+        $('.carousel-inner').append('<div class="item"><img src="http://192.168.0.2:8080/1024x768/' + title.split(' ').join('%20') + '/1" /> <div class="carousel-caption"><h4>' + title + '</h4></div></div>');
+        $('.carousel-control.right')[0].click();
+    };
+
+    fetchAlbumcover();
+
 });

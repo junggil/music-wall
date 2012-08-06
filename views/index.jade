@@ -1,76 +1,46 @@
 extends layout
 
+block header
+        link(rel='stylesheet', href='/css/list.css')
+
+block script
+        script(type='text/javascript', src='js/list/list.js')
+        script(type='text/javascript', src='/socket.io/socket.io.js')
+        script(type='text/javascript', src='js/audiojs/audio.js')
+        script(type='text/javascript', src='js/audiojs/script.js')
+        script(type='text/javascript')
+            var options = { valueNames: [ 'title', 'artist' ] };
+            var musicList = new List('music-list', options);
+
 block content
-    .container-fluid
+      #album_cover.carousel.slide
+        .carousel-inner
+        a.carousel-control.left(href='#album_cover', data-slide='prev') &lsaquo;
+        a.carousel-control.right(href='#album_cover', data-slide='next') &rsaquo;
       .row-fluid
-        .span2
-        .span8
-          #album_cover.carousel.slide
-            .carousel-inner
-              .active.item
-                img(src='http://wallpapers.vintage.it/wallpapers/the_Beatles_wallpaper_1024x768.jpg')
-                .carousel-caption
-                  h4 First Thumbnail label
-                  p
-                    | Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
-              .item
-                img(src='http://images2.fanpop.com/image/photos/9700000/The-Beatles-the-beatles-9709058-1600-1200.jpg')
-                .carousel-caption
-                  h4 Second Thumbnail label
-                  p
-                    | Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
-              .item
-                img(src='http://fc08.deviantart.net/fs15/f/2007/109/c/7/The_Beatles_by_berjack.jpg')
-                .carousel-caption
-                  h4 Third Thumbnail label
-                  p
-                    | Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
-            a.carousel-control.left(href='#album_cover', data-slide='prev') &lsaquo;
-            a.carousel-control.right(href='#album_cover', data-slide='next') &rsaquo;
-          .row-fluid
-            .span6
-              img(src='img/audiojs.png')
-              .well.sidebar-nav
-                ul.nav.nav-list
-                  li.nav-header The Beatles
-                  li.active
-                    a(href='#') 01. For You Blue
-                  li
-                    a(href='#') 02. Teddy Boy
-                  li
-                    a(href='#') 03. Let It Be
-                  li
-                    a(href='#') 04. Get Back
-                  li
-                    a(href='#') 05. Don't Let Me Down
-                  li
-                    a(href='#') 06. Dig a Pony
-                  li
-                    a(href='#') 07. Two of Us
-                  li.nav-header Melon Top 100
-                  li
-                    a(href='#') 01. 강남스타일
-                  li
-                    a(href='#') 02. I Love You
-                  li
-                    a(href='#') 03. Only One
-                  li
-                    a(href='#') 04. Loving U
-                  li
-                    a(href='#') 05. Day by Day
+        .span6
+          audio(preload)
+          ol
+            #music-list
+              #playlist.well.sidebar-nav(style="height:300px; overflow:auto")
+                ul.nav.nav-list.list
+                    each music in Object.keys(musics)
+                        li
+                          a(href='#', data-src='musics/#{music}')
+                             strong.title #{musics[music]}
+                             small.artist 
 
-              form.well.form-search
-                input.input-medium.search-query(type='text')
-                button.btn(type='submit') Search
+              p(style="margin-top:18px;")
+                 input.search(placeholder='Title Search')
 
-            .span6
-              .hero-unit
-                h2  Drop Files Here! 
-                  p
-                    You can simply upload music files using drag and drop or also you can select your own files from old-style dialog.
-                  p
-                    a.btn.btn-primary.btn-large Select Files
-              .alert.alert-block
-                a.close(data-dismiss='alert', href='#') ×
-                h4.alert-heading Warning!
-                | Please select under 10mb size files each.
+        .span6
+          .hero-unit
+            h2  Drop Files Here! 
+            p
+              You can simply upload music files using drag and drop or also you can select your own files from old-style dialog.
+            p
+              a.btn.btn-primary.btn-large Select Files
+          .alert.alert-block
+            a.close(data-dismiss='alert', href='#') ×
+            h4.alert-heading Warning!
+            | Please select under 10mb size files each.

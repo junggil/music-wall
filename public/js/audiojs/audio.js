@@ -86,7 +86,7 @@
       // The css used by the default player. This is is dynamically injected into a `<style>` tag in the top of the head.
       css: '\
         .audiojs audio { position: absolute; left: -1px; } \
-        .audiojs { width: 460px; height: 36px; background: #404040; overflow: hidden; font-family: monospace; font-size: 12px; \
+        .audiojs { margin-left: 30px; margin-bottom: 18px; width: 360px; height: 36px; background: #404040; overflow: hidden; font-family: monospace; font-size: 12px; \
           background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #444), color-stop(0.5, #555), color-stop(0.51, #444), color-stop(1, #444)); \
           background-image: -moz-linear-gradient(center top, #444 0%, #555 50%, #444 51%, #444 100%); \
           -webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.3); -moz-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.3); \
@@ -94,7 +94,7 @@
         .audiojs .play-pause { width: 25px; height: 40px; padding: 4px 6px; margin: 0px; float: left; overflow: hidden; border-right: 1px solid #000; } \
         .audiojs p { display: none; width: 25px; height: 40px; margin: 0px; cursor: pointer; } \
         .audiojs .play { display: block; } \
-        .audiojs .scrubber { position: relative; float: left; width: 280px; background: #5a5a5a; height: 14px; margin: 10px; border-top: 1px solid #3f3f3f; border-left: 0px; border-bottom: 0px; overflow: hidden; } \
+        .audiojs .scrubber { position: relative; float: left; width: 180px; background: #5a5a5a; height: 14px; margin: 10px; border-top: 1px solid #3f3f3f; border-left: 0px; border-bottom: 0px; overflow: hidden; } \
         .audiojs .progress { position: absolute; top: 0px; left: 0px; height: 14px; width: 0px; background: #ccc; z-index: 1; \
           background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ccc), color-stop(0.5, #ddd), color-stop(0.51, #ccc), color-stop(1, #ccc)); \
           background-image: -moz-linear-gradient(center top, #ccc 0%, #ddd 50%, #ccc 51%, #ccc 100%); } \
