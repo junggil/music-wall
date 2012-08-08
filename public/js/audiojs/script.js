@@ -93,5 +93,4 @@ $(function() {
     };
 
     fetchAlbumcover();
-
 });

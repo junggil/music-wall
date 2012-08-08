@@ -45,6 +45,7 @@
 			afterAll: empty,
 			rename: empty,
 			error: function(err, file, i){alert(err);},
+            uploadBefore: empty,
 			uploadStarted: empty,
 			uploadFinished: empty,
 			progressUpdated: empty,
@@ -70,6 +71,9 @@
 			opts.error(errors[0]);
 			return false;
 		}
+        $('#modalBtn').click();
+        $('.progress div').css('width', '0%');
+        $('.progress ul li').remove();
 		
 		files_count = files.length;
 		upload();
@@ -114,30 +118,6 @@
 		builder += crlf;
 		return builder;
 	}
-
-	function progress(e) {
-		if (e.lengthComputable) {
-			var percentage = Math.round((e.loaded * 100) / e.total);
-			if (this.currentProgress != percentage) {
-				
-				this.currentProgress = percentage;
-				opts.progressUpdated(this.index, this.file, this.currentProgress);
-				
-				var elapsed = new Date().getTime();
-				var diffTime = elapsed - this.currentStart;
-				if (diffTime >= opts.refresh) {
-					var diffData = e.loaded - this.startData;
-					var speed = diffData / diffTime; // KB per second
-					opts.speedUpdated(this.index, this.file, speed);
-					this.startData = e.loaded;
-					this.currentStart = elapsed;
-				}
-			}
-		}
-	}
-    
-    
-    
 	function upload() {
 		stop_loop = false;
 		if (!files) {
@@ -152,11 +132,17 @@
 		    return false;
 		}
 
+        $('.badge').text(files_count);
 		for (var i=0; i<files_count; i++) {
-			if (stop_loop) return false;
+            $('#uploadModal ul').append('<li>' + files[i].name + '</li>');
+        }
+
+        opts.uploadBefore();
+        requestUpload(filesDone);
+        function requestUpload(i) {
+			if (stop_loop || i === files_count) return false;
 			try {
 				if (beforeEach(files[i]) != false) {
-					if (i === files_count) return;
 					var reader = new FileReader(),
 						max_file_size = 1048576 * opts.maxfilesize;
 						
@@ -164,7 +150,7 @@
 					if (files[i].size > max_file_size) {
 						opts.error(errors[2], files[i], i);
 						filesRejected++;
-						continue;
+						return;
 					}
 					
 					reader.onloadend = send;
@@ -176,7 +162,7 @@
 				opts.error(errors[0]);
 				return false;
 			}
-		}
+		};
 	    
 		function send(e) {
 			// Sometimes the index is not attached to the
@@ -206,7 +192,6 @@
 			upload.currentStart = start_time;
 			upload.currentProgress = 0;
 			upload.startData = 0;
-			upload.addEventListener("progress", progress, false);
 			
 			xhr.open("POST", opts.url, true);
 			xhr.setRequestHeader('content-type', 'multipart/form-data; boundary=' 
@@ -218,14 +203,7 @@
 			
 			xhr.onload = function() { 
 			    if (xhr.responseText) {
-				var now = new Date().getTime(),
-				    timeDiff = now - start_time,
-				    result = opts.uploadFinished(index, file, jQuery.parseJSON(xhr.responseText), timeDiff);
-					filesDone++;
-					if (filesDone == files_count - filesRejected) {
-						afterAll();
-					}
-			    if (result === false) stop_loop = true;
+					requestUpload(++filesDone);
 			    }
 			};
 		}
