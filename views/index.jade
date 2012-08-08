@@ -7,12 +7,9 @@ block script
         script(type='text/javascript', src='js/list/list.js')
         script(type='text/javascript', src='/socket.io/socket.io.js')
         script(type='text/javascript', src='js/audiojs/audio.js')
-        script(type='text/javascript', src='js/audiojs/script.js')
-        script(src='js/upload/jquery.filedrop.js')
-        script(src='js/upload/script.js')
-        script(type='text/javascript')
-            var options = { valueNames: [ 'title', 'artist' ] };
-            var musicList = new List('music-list', options);
+        script(type='text/javascript', src='js/upload/jquery.filedrop.js')
+        script(type='text/javascript', src='js/script.js')
+        script(type='text/javascript', src='js/notifier.js')
 
 block content
       #album_cover.carousel.slide
@@ -29,8 +26,8 @@ block content
                     each music in Object.keys(musics)
                         li
                           a(href='#', data-src='musics/#{music}')
-                             strong.title #{musics[music]}
-                             small.artist 
+                            strong.title #{musics[music]}
+                            small.artist 
 
               p(style="margin-top:18px;")
                  input.search(placeholder='Title Search')

@@ -13,7 +13,7 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('view options', { layout: false });
-  app.use(express.limit('10mb'));
+  app.use(express.limit('15mb'));
   app.use(express.bodyParser({uploadDir: __dirname + '/public/tmp'}));  
   app.use(express.static(__dirname + '/public'));
   app.use(express.methodOverride());
@@ -30,6 +30,7 @@ io.sockets.on('connection', function(socket) {
     socket.join('music-wall');
     socket.on('keydown', function(data) { socket.broadcast.emit('keydown', data); socket.emit('keydown', data); });
     socket.on('click',   function(data) { socket.broadcast.emit('click',   data); socket.emit('click',   data); });
+    socket.on('upload',  function(data) { routes.extractTitle(data, socket); });
     socket.on('ready',   function() { 
         readiness += 1; 
         console.log('clients : ' + clients + ', readiness : ' + readiness);
@@ -37,14 +38,13 @@ io.sockets.on('connection', function(socket) {
             socket.broadcast.emit('play'); socket.emit('play'); 
             readiness = 0;
         }
-    });       
+    });
     socket.on('disconnect', function()  { clients -= 1; });
 });
 
 
 // Routes
 app.get('/', routes.index);
-app.get('/drag', routes.drag);
 app.get('/about', routes.about);
 app.get('/changelog', routes.changelog);
 app.post('/upload', routes.upload);

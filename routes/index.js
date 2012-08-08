@@ -2,13 +2,13 @@ var util = require('util')
     , fs = require('fs')
     , exec = require('child_process').exec;
 
+function escapeshell(cmd) {
+  return '"'+cmd.replace(/(["\s'$`\\()&])/g,'\\$1')+'"';
+};
+
 function renderByDate(files, res) {
     var count = files.length, 
         results = {};
-    var escapeshell = function(cmd) {
-      return '"'+cmd.replace(/(["\s'$`\\()&])/g,'\\$1')+'"';
-    };
-
     var sortOnKeys = function(dict) {
         var sorted = [];
         for(var key in dict) {
@@ -26,9 +26,14 @@ function renderByDate(files, res) {
 
     files.forEach(function(file) {
         exec('mediainfo "public/musics/' + escapeshell(file) + '" |grep "Track name"| awk "NR==1" | cut -d ":" -f 2', function(error, stdout, stderr) { 
-            results[file] = stdout;
+            if (stdout) {
+                results[file] = stdout;
+            } else {
+                results[file] = file.split('.mp3')[0]
+            }
             count--;
             if (count == 0) {
+                console.log(results);
                 res.render('index', {title : 'MusicWall, A Synchronized Audio Player', target : 'home', musics : sortOnKeys(results)});
             }
         });
@@ -36,7 +41,12 @@ function renderByDate(files, res) {
 }
     
 exports.index = function(req, res){
-    renderByDate(fs.readdirSync('public/musics/'), res);
+    renderByDate(fs.readdirSync('public/musics/').filter(function (filename) {
+        function endsWith(str, suffix) {
+            return str.indexOf(suffix, str.length - suffix.length) !== -1;
+        }
+        return endsWith(filename, '.mp3');
+    }), res);
 };
 
 exports.about = function(req, res){
@@ -80,9 +90,27 @@ exports.upload = function(req, res){
     res.send('"uploaded successfuly"');
 };
 
+exports.extractTitle = function(data, socket) {
+    var tmp_path = 'public/musics/' + data.file;
+    var target_path = 'public/musics/' + data.rename;
+
+    fs.rename(tmp_path, target_path, function(err){
+        if(err) throw err;
+        exec('mediainfo "' + target_path + '" |grep "Track name"| awk "NR==1" | cut -d ":" -f 2', function(error, stdout, stderr) { 
+            if (stdout) {
+                data.title = stdout;
+            } else {
+                data.title = data.rename;
+            }
+            console.log(data);
+            socket.broadcast.emit('upload', data); socket.emit('upload', data);
+        });
+    });
+}
+
 function renameImg(image){
     var tmp_path = image.path;
-    var target_path = './public/upload/' + image.name;
+    var target_path = 'public/musics/' + image.name;
     console.log('->> tmp_path: ' + tmp_path );
     console.log('->> target_path: ' + target_path );
             

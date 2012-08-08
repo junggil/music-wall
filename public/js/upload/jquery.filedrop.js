@@ -133,6 +133,7 @@
 		}
 
         $('.badge').text(files_count);
+        $('#uploadModal ul li').remove();
 		for (var i=0; i<files_count; i++) {
             $('#uploadModal ul').append('<li>' + files[i].name + '</li>');
         }
@@ -179,7 +180,7 @@
 				boundary = '------multipartformboundary' + (new Date).getTime(),
 				builder;
 				
-			newName = rename(file.name);
+			newName = rename(file.name, start_time);
 			if (typeof newName === "string") {
 				builder = getBuilder(newName, e.target.result, boundary);
 			} else {
@@ -199,10 +200,9 @@
 			    
 			xhr.sendAsBinary(builder);  
 			
-			opts.uploadStarted(index, file, files_count);  
-			
 			xhr.onload = function() { 
 			    if (xhr.responseText) {
+                    opts.uploadStarted(index, file, files_count, start_time);  
 					requestUpload(++filesDone);
 			    }
 			};
@@ -219,8 +219,8 @@
 		return undefined;
 	}
     
-	function rename(name) {
-		return opts.rename(name);
+	function rename(name, start_time) {
+		return opts.rename(name, start_time);
 	}
 	
 	function beforeEach(file) {
