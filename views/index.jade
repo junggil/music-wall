@@ -8,8 +8,10 @@ block script
         script(type='text/javascript', src='/socket.io/socket.io.js')
         script(type='text/javascript', src='js/audiojs/audio.js')
         script(type='text/javascript', src='js/upload/jquery.filedrop.js')
-        script(type='text/javascript', src='js/script.js')
         script(type='text/javascript', src='js/notifier.js')
+        script(type='text/javascript', src='js/script.js')
+        script(type='text/javascript')
+            var thumb_up;
 
 block content
       #album_cover.carousel.slide
@@ -25,9 +27,13 @@ block content
                 ul.nav.nav-list.list
                     each music in Object.keys(musics)
                         li
-                          a(href='#', data-src='musics/#{music}')
-                            strong.title #{musics[music]}
-                            small.artist 
+                          span#music
+                            a(href='#', data-src='musics/#{music}')
+                              strong.title #{musics[music]}
+                              small.artist 
+                          span
+                            i.icon-circle-arrow-up
+                            i.icon-circle-arrow-down
 
               p(style="margin-top:18px;")
                  input.search(placeholder='Title Search')

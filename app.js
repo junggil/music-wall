@@ -30,6 +30,7 @@ io.sockets.on('connection', function(socket) {
     socket.join('music-wall');
     socket.on('keydown', function(data) { socket.broadcast.emit('keydown', data); socket.emit('keydown', data); });
     socket.on('click',   function(data) { socket.broadcast.emit('click',   data); socket.emit('click',   data); });
+    socket.on('thumb',   function(data) { socket.broadcast.emit('thumb',   data); socket.emit('thumb',   data); });
     socket.on('upload',  function(data) { routes.extractTitle(data, socket); });
     socket.on('ready',   function() { 
         readiness += 1; 

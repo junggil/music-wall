@@ -21,14 +21,14 @@ $(function() {
     audio.load(first);
 
     // Load in a track on click
-    $('ol li').click(function(e) {
+    $('ol li span#music').click(function(e) {
       e.preventDefault();
-      socket.emit('click', {'offset' : $('ol li').index(this)});
+      socket.emit('click', {'offset' : $('ol li span#music').index(this)});
     });
 
     // Mouse click shortcuts
     function mouseShortcut(item) {
-        item.addClass('playing').siblings().removeClass('playing');
+        item.parent().addClass('playing').siblings().removeClass('playing');
         audio.load($('a', item).attr('data-src'));
         fetchAlbumcover();
         audio.pause();
@@ -36,12 +36,12 @@ $(function() {
         (function loadingCheck(duration) {
             return setTimeout(function(duration) {
                 if($('.loading').length == 1) {
-                    setTimeout(function(){socket.emit('ready');}, 200);
+                    setTimeout(function(){socket.emit('ready');}, 500);
                 } else {
                     loadingCheck(100);
                 }
             }, duration);
-        })(300);
+        })(1000);
     };
 
     // Keyboard shortcuts
@@ -50,12 +50,12 @@ $(function() {
       if (unicode == 39) {
         var next = $('li.playing').next();
         if (!next.length) next = $('ol li').first();
-        mouseShortcut(next);
+        mouseShortcut($('span#music', next));
         // back arrow
       } else if (unicode == 37) {
         var prev = $('li.playing').prev();
         if (!prev.length) prev = $('ol li').last();
-        mouseShortcut(prev);
+        mouseShortcut($('span#music', prev));
         // spacebar
       } else if (unicode == 32) {
         audio.playPause();
@@ -78,7 +78,7 @@ $(function() {
         audio.play();
     });
     socket.on('click', function(data) {
-        var item = $('ol li').eq(data.offset);
+        var item = $('ol li span#music').eq(data.offset);
         mouseShortcut(item);
     });
 
@@ -92,6 +92,7 @@ $(function() {
 
     function fetchAlbumcover(){
         var title = $('.playing a strong').text().trim();
+        $('.carousel-inner .item').remove();
         $('.carousel-inner').append('<div class="item"><img src="http://192.168.0.2:8080/1024x768/' + title.split(' ').join('%20') + '/1" /> <div class="carousel-caption"><h4>' + title + '</h4></div></div>');
         $('.carousel-control.right')[0].click();
     };
@@ -118,12 +119,11 @@ $(function() {
 		paramname:'imgs',
 		
 		maxfiles: 10,
-    	maxfilesize: 10,
+    	maxfilesize: 15,
 		url: 'http://192.168.0.2:4040/upload',
 		
 		uploadFinished:function(i,file,response){
-			// $.data(file).addClass('done');
-			// response is the JSON object that post_file.php returns
+            $('.modal').hide();
 		},
 		
     	error: function(err, file) {
@@ -180,14 +180,60 @@ $(function() {
     };
 
     socket.on('upload', function(data) {
-        $('#playlist ul').append('<li><a href="#" data-src="musics/'+data.rename+'"><strong class="title">'+data.title+'</strong><small class="artist"></small></a></li>');
+        var template = '<li>'+
+                            '<span id="music">'+
+                               '<a href="#" data-src="musics/'+data.rename+'">'+ 
+                                  '<strong class="title">'+data.title+'</strong><small class="artist"></small>'+ 
+                               '</a>'+ 
+                            '</span>'+ 
+                            '<span>'+ 
+                               '<i class="icon-circle-arrow-up"></i>'+ 
+                               '<i class="icon-circle-arrow-down"></i>'+
+                            '</span>'+
+                         '</li>';
+        $('#playlist ul').append($(template));
         musicList.add({ title : data.title, artist : '' });
         Notifier.success(data.rename + ' is uploded!');
         $('#playlist li').last().removeClass('playing')
-        $('#playlist li').last().click(function(e) {
+        $('#playlist i').click(thumb_up);
+        $('#playlist li span#music').last().click(function(e) {
             e.preventDefault();
-            socket.emit('click', {'offset' : $('ol li').index(this)});
+            socket.emit('click', {'offset' : $('ol li span#music').index(this)});
         });
     });
+
+    // -------------------------------------------------
+    //  script for menu align
+    // -------------------------------------------------
+    $('.nav-collapse li a').attr('style', 'display:block');
+
+    // -------------------------------------------------
+    //  script for menu thumb_up / thumb_down
+    // -------------------------------------------------
+    thumb_up = function(e) { 
+        e.preventDefault();
+        socket.emit('thumb', {'offset' : $('#playlist i').index(this)});
+    }
+
+    function onClick_thumb(cur_pos){
+        var cur_item = $('#playlist li').eq(cur_pos / 2);
+
+        if (cur_pos % 2 == 0) {
+            if (cur_pos / 2 > 0) {
+                cur_item.prev().before(cur_item);
+            }
+        } else {
+            if (cur_pos / 2 < $('#playlist li').length - 1) {
+                cur_item.next().after(cur_item);
+            }
+        }
+    }
+
+    socket.on('thumb', function(data) {
+        onClick_thumb(data.offset);
+    });
+
+    // Load in a track on click
+    $('#playlist i').click(thumb_up);
 
 });
